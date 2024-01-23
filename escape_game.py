@@ -5,13 +5,13 @@ layout_one = [
     [sg.Text('PIRMAS LYGIS')],
     [sg.Text('Pabandykite išeiti iš programos')],
     [sg.Text('Turėkite omenyje: programa apgaulinga')],
-    [sg.Text('Ar tikrai norite išeiti iš programos?')],
+    [sg.Text('Ar nenorite išeiti iš programos?')],
     [sg.Text('Įveskite "Ne" arba "Taip"')],
     [sg.Text('Įvedę pasirinkimą paspauskite patvirtinimo mygtuką')],
     [sg.Input(key='INPUT_ONE')],
     [
-    sg.Button('Patvirtinti pasirinkimą "Taip"', key='YES'),
-    sg.Button('Patvirtinti pasirinkimą "Ne"', key='NO'),
+    sg.Button('Patvirtinti teigiamą pasirinkimą', key='YES'),
+    sg.Button('Patvirtinti neigiamą pasirinkimą', key='NO'),
     sg.Button('Tęsti', key='CONTINUE_ONE', visible=False)
     ],
     [sg.Text(key='OUTPUT_ONE')]
@@ -33,12 +33,13 @@ layout_two = [
 
 layout_three = [
     [sg.Text('III LYGIS')],
-    [sg.Text('Sveikiname, pasiekėte III lygį!')],
-    [sg.Text('Atspėkite skaičių nuo 1 iki 10!')],
-    [sg.Text('Įvedę spėjimą paspauskite spėjimo mygtuką')],
+    [sg.Text('Sveikiname, pasiekėte III-ią lygį!')],
+    [sg.Text('Atspėkite skaičių nuo vieno iki dešimt!')],
+    [sg.Text('Įvedę spėjimą paspauskite mygtuką "Spėti"')],
     [sg.Input(key='INPUT_THREE')],
     [
-    sg.Button('Spėti', key='GUESS')
+    sg.Button('Spėti', key='GUESS'),
+    sg.Button('Tęsti', key='CONTINUE_THREE', visible=False)
     ],
     [sg.Text(key='OUTPUT_THREE')]
 ]
@@ -48,6 +49,10 @@ level_one = sg.Window('Escape: PIRMAS LYGIS', layout_one, font='Arial 20')
 level_two = sg.Window('Escape: ANTRAS LYGIS', layout_two, font='Arial 20')
 
 level_three = sg.Window('Escape: III LYGIS', layout_three, font='Arial 20')
+
+# Parašyti layout ir užpildyti parametrus
+# level_four = sg.Window('')
+
 
 
 if level_one:
@@ -67,8 +72,7 @@ if level_one:
             level_one['CONTINUE_ONE'](visible=True)
         if event == 'CONTINUE_ONE':
             level_one.close()
-            level_two.read()          
-            
+            level_two()
 
 if level_two:
     while True:
@@ -87,7 +91,32 @@ if level_two:
             level_two['CONTINUE_TWO'](visible=True)
         if event_2 == 'CONTINUE_TWO':
             level_two.close()
-            level_three.read()
+
+
+if level_three:
+    while True:
+        event_3, values_3 = level_three.read()
+        atsakymas = 'III'
+        teisingas_skaicius = '3'
+        teisingi_stringai =  ['trys', 'three', 'tres', 'trois', 'drei', 'tri']
+        neteisingi_skaiciai = ['1', '2', '4', '5', '6', '7', '8', '9', '10']
+        if event_3 == sg.WIN_CLOSED:
+            break        
+        elif event_3 == 'GUESS' and values_3['INPUT_THREE'] in neteisingi_skaiciai:
+            level_three['OUTPUT_THREE'].update('Neteisingas skaičiaus formatas, bandykite dar kartą')
+        elif event_3 == 'GUESS' and values_3['INPUT_THREE'] == teisingas_skaicius:
+            level_three['OUTPUT_THREE'].update('Skaičių atspėjote, tačiau neteisingas skaičiaus formatas,\nbandykite dar kartą')
+        elif event_3 == 'GUESS' and values_3['INPUT_THREE'] in teisingi_stringai:
+            level_three['OUTPUT_THREE'].update('Skaičių atspėjote, teisingas skaičiaus formatas,\npabandykite įvesti skaičių senovine garsios imperijos kalba')
+        elif event_3 == 'GUESS' and values_3['INPUT_THREE'] != atsakymas:
+            level_three['OUTPUT_THREE'].update('Teisingas skaičiaus formatas, skaičiaus neatspėjote, bandykite dar kartą')
+        elif event_3 == 'GUESS' and values_3['INPUT_THREE'] == atsakymas:
+            level_three['OUTPUT_THREE'].update('Pasirinkimas teisingas, spauskite mygtuką "Tęsti"')
+            level_three['CONTINUE_THREE'](visible=True)
+            level_three.close()
+# Parašyti level_four            
+#           level_four.read()
+
 
 level_one.close()
 level_two.close()
