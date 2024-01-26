@@ -2,21 +2,15 @@ import PySimpleGUI as sg
 from layouts import Layouts
 
 
-level_one = sg.Window('Escape: PIRMAS LYGIS', layout=Layouts.layout_one(), font='Arial 20')
 
-level_two = sg.Window('Escape: ANTRAS LYGIS', Layouts.layout_two(), font='Arial 20')
-
-level_three = sg.Window('Escape: III LYGIS', Layouts.layout_three(), font='Arial 20')
-
-level_four = sg.Window('Escape: KETVIRTAS LYGIS - NEMATOMAS RAŠALAS', Layouts.layout_four(), font='Arial 20')
-
-
-if level_one:
+def level_one():
+    level_one = sg.Window('Escape: PIRMAS LYGIS', layout=Layouts.layout_one(), font='Arial 20')   
     while True:
         event, values = level_one.read()
         if event == sg.WINDOW_CLOSED:
-            break
-        elif event == 'YES' and values['INPUT_ONE'] == 'Taip':
+            level_one.close()
+            return False
+        if event == 'YES' and values['INPUT_ONE'] == 'Taip':
             level_one['OUTPUT_ONE'].update(f'Pasirinkimas "{values["INPUT_ONE"]}" neteisingas!')
         elif event == 'NO' and values['INPUT_ONE'] == 'Ne':
             level_one['OUTPUT_ONE'].update(f'Pasirinkimas "{values["INPUT_ONE"]}" neteisingas')
@@ -28,14 +22,16 @@ if level_one:
             level_one['CONTINUE_ONE'](visible=True)
         if event == 'CONTINUE_ONE':
             level_one.close()
-            level_two()
+            return True
 
-if level_two:
+def level_two():
+    level_two = sg.Window('Escape: ANTRAS LYGIS', Layouts.layout_two(), font='Arial 20')    
     while True:
-        event_2, values_2 = level_two.read()        
+        event_2, values_2 = level_two.read()
         if event_2 == sg.WINDOW_CLOSED:
-            break
-        elif event_2 == 'YES' and values_2['INPUT_TWO'] == 'eN':
+            level_two.close()
+            return False
+        if event_2 == 'YES' and values_2['INPUT_TWO'] == 'eN':
             level_two['OUTPUT_TWO'].update(f'sagnisieten "{values_2["INPUT_TWO"]}" samiknirisaP')
         elif event_2 == 'NO' and values_2['INPUT_TWO'] == 'piaT':
             level_two['OUTPUT_TWO'].update(f'sagnisieten "{values_2["INPUT_TWO"]}" samiknirisaP')
@@ -47,9 +43,10 @@ if level_two:
             level_two['CONTINUE_TWO'](visible=True)
         if event_2 == 'CONTINUE_TWO':
             level_two.close()
+            return True
 
-# Padaryti ne case sensitive, išskyrus atsakymą
-if level_three:
+def level_three():
+    level_three = sg.Window('Escape: ANTRAS LYGIS', Layouts.layout_two(), font='Arial 20')
     while True:
         event_3, values_3 = level_three.read()
         atsakymas = 'III'
@@ -57,7 +54,8 @@ if level_three:
         teisingi_stringai =  ['trys', 'three', 'tres', 'trois', 'drei', 'tri']
         neteisingi_skaiciai = ['1', '2', '4', '5', '6', '7', '8', '9', '10']
         if event_3 == sg.WINDOW_CLOSED:
-            break        
+            level_three.close()
+            return False        
         elif event_3 == 'GUESS' and values_3['INPUT_THREE'] in neteisingi_skaiciai:
             level_three['OUTPUT_THREE'].update('Neteisingas skaičiaus formatas, bandykite dar kartą')
         elif event_3 == 'GUESS' and values_3['INPUT_THREE'] == teisingas_skaicius:
@@ -69,23 +67,39 @@ if level_three:
         elif event_3 == 'GUESS' and values_3['INPUT_THREE'] == atsakymas:
             level_three['OUTPUT_THREE'].update('Pasirinkimas teisingas, spauskite mygtuką "Tęsti"')
             level_three['CONTINUE_THREE'](visible=True)
-            level_three.close()            
-            level_four.read()
+            level_three.close()
+            return True
 
-
-if level_four:
+def level_four():
+    level_four = sg.Window('Escape: KETVIRTAS LYGIS - NEMATOMAS RAŠALAS', Layouts.layout_four(), font='Arial 20')
     while True:
         event_4, values_4 = level_four.read()
         if event_4 == sg.WINDOW_CLOSED:
-            break
+            level_four.close()
+            return False
         elif event_4 == 'MYGTUKAS' and values_4['INPUT_FOUR'] != '1337':
             level_four['OUTPUT_FOUR'].update('Užduotis neįvykdyta, bandykite dar kartą')
         elif event_4 == 'MYGTUKAS' and values_4['INPUT_FOUR'] == '1337':
             level_four['OUTPUT_FOUR'].update('Užduotis įvykdyta, spauskite mygtuką "Tęsti"')
             level_four['CONTINUE_FOUR'](visible=True)
-#             level_four.close()
+            level_four.close()
+            return True
 
+def level_five():
+    pass    
 
-# level_one.close()
-# level_two.close()
-# level_three.close()
+def main():
+    current_level = 1
+    while True:
+        if current_level == 1 and level_one():
+            current_level = 2, level_one() == False
+        elif current_level == 2 and level_two():
+            current_level = 3
+        elif current_level == 3 and level_three():
+            current_level = 4
+        elif current_level == 4 and level_four():
+            current_level = 5
+        elif current_level == 5 and level_five():
+            break                    
+
+main()
