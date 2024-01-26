@@ -1,5 +1,5 @@
 import PySimpleGUI as sg
-
+# Reikia hint mygtukų
 
 class Layouts():
 
